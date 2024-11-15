@@ -1,0 +1,36 @@
+baseURL: 'https://example.org/'
+languageCode: 'es-mx'
+title: 'El Camino de la Amazona'
+description: Un espacio virtual sentido y creado para generar conciencia en hombres y mujeres que quieren sanar sus heridas emocionales antes de convertirse en padres.
+theme: 'ananke'
+
+publishDir: ../public
+resourceDir: ../resources
+
+enableRobotsTXT: true
+
+# Site-wide parameters
+params:
+  description: "Un espacio virtual sentido y creado para generar conciencia en hombres y mujeres que quieren sanar sus heridas emocionales antes de convertirse en padres."
+  keywords: "Agile, Scrum, Kanban, DevOps, Azure DevOps, Github, AI"
+  author: "Jessica Baez Calderin"
+  featured_image: "/images/elcaminodelaamazona-hero.jpg"
+
+# Enable sitemap and robots.txt
+sitemap:
+  filename: "sitemap.xml"
+  changefreq: "daily"
+  priority: 0.5
+
+# RSS feed settings
+rss:
+  filename: "rss.xml"
+  name: "RSS Feed"
+  description: "Subscribe to our RSS feed"
+
+outputs:
+  home: [html, json, rss]
+  section: [html, rss]
+  taxonomy: [html, rss]
+  term: [html, rss]
+  page: [html, rss]
