@@ -1,4 +1,4 @@
-name: Build & Release (AgileForDecisionMakers)
+name: Build & Release (elcaminodelaamazona)
 
 permissions:
   contents: read
@@ -40,9 +40,9 @@ jobs:
       GitVersion_NuGetVersion: ${{ steps.gitversion.outputs.GitVersion_NuGetVersion }}
       GitVersion_PreReleaseNumber: ${{ steps.gitversion.outputs.GitVersion_PreReleaseNumber }}
       GitVersion_MajorMinorPatch: ${{ steps.gitversion.outputs.GitVersion_MajorMinorPatch }}
-      AgileForDecisionMakers_Ring: ${{ steps.AgileForDecisionMakers.outputs.Ring }}
-      AgileForDecisionMakers_AzureSitesEnvironment: ${{ steps.AgileForDecisionMakers.outputs.AzureSitesEnvironment }}
-      AgileForDecisionMakers_AzureSitesConfig: ${{ steps.AgileForDecisionMakers.outputs.AzureSitesConfig }}
+      elcaminodelaamazona_Ring: ${{ steps.elcaminodelaamazona.outputs.Ring }}
+      elcaminodelaamazona_AzureSitesEnvironment: ${{ steps.elcaminodelaamazona.outputs.AzureSitesEnvironment }}
+      elcaminodelaamazona_AzureSitesConfig: ${{ steps.elcaminodelaamazona.outputs.AzureSitesConfig }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,22 +59,17 @@ jobs:
         with:
           useConfigFile: true
           configFilePath: .github/GitVersion.yml
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ secrets.NKDAGILITY_BOT_APP_ID }}
-          private-key: ${{ secrets.NKDAGILITY_BOT_CLIENTSECRET }}
       - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
             content:
               - 'content/**'
-      - name: "Build AgileForDecisionMakers Outputs"
+      - name: "Build elcaminodelaamazona Outputs"
         shell: pwsh
-        id: AgileForDecisionMakers
+        id: elcaminodelaamazona
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Get Branch Name
           Write-Output "::group::Get Branch Name"
@@ -126,10 +121,6 @@ jobs:
           echo "docs_baseURL=$docs_baseURL" >> $env:GITHUB_OUTPUT
           Write-Output "-------------------------------------------"
           Write-Output "::endgroup::"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Scripts
-          path: ./.powershell/**
 
   # Setup Validator
   SetupSummeryStage:
@@ -140,14 +131,14 @@ jobs:
       - name: "Show Summery"
         if: always()
         shell: pwsh
-        id: AgileForDecisionMakers-summery
+        id: elcaminodelaamazona-summery
         run: |
           $markdown = @"
-             ## ${{needs.Setup.outputs.GitVersion_SemVer}} (${{needs.Setup.outputs.AgileForDecisionMakers_Ring}})
-             ### AgileForDecisionMakers
-               - AgileForDecisionMakers_Ring: ${{needs.Setup.outputs.AgileForDecisionMakers_Ring}}
-               - AgileForDecisionMakers_AzureSitesEnvironment: ${{needs.Setup.outputs.AgileForDecisionMakers_AzureSitesEnvironment}}
-               - AgileForDecisionMakers_AzureSitesConfig: ${{needs.Setup.outputs.AgileForDecisionMakers_AzureSitesConfig}}
+             ## ${{needs.Setup.outputs.GitVersion_SemVer}} (${{needs.Setup.outputs.elcaminodelaamazona_Ring}})
+             ### elcaminodelaamazona
+               - elcaminodelaamazona_Ring: ${{needs.Setup.outputs.elcaminodelaamazona_Ring}}
+               - elcaminodelaamazona_AzureSitesEnvironment: ${{needs.Setup.outputs.elcaminodelaamazona_AzureSitesEnvironment}}
+               - elcaminodelaamazona_AzureSitesConfig: ${{needs.Setup.outputs.elcaminodelaamazona_AzureSitesConfig}}
              ### GitVersion
                - GitVersion_BranchName: ${{needs.Setup.outputs.GitVersion_BranchName}}
                - GitVersion_SemVer: ${{needs.Setup.outputs.GitVersion_SemVer}}
@@ -182,7 +173,7 @@ jobs:
           GitVersion_AssemblySemVer: ${{ needs.Setup.outputs.GitVersion_AssemblySemVer }}
           GitVersion_InformationalVersion: ${{ needs.Setup.outputs.GitVersion_InformationalVersion }}
           GitVersion.SemVer: ${{ needs.Setup.outputs.GitVersion_SemVer }}
-          AgileForDecisionMakers_AzureSitesConfig: ${{ needs.Setup.outputs.AgileForDecisionMakers_AzureSitesConfig }}
+          elcaminodelaamazona_AzureSitesConfig: ${{ needs.Setup.outputs.elcaminodelaamazona_AzureSitesConfig }}
           PR_Number: ${{ github.event.number }}
       - uses: igsekor/pyspelling-any@v1.0.4
         id: spellcheck
@@ -197,9 +188,9 @@ jobs:
 
       - name: Build
         run: |
-          Write-Host "Building site for ${{ (needs.Setup.outputs.AgileForDecisionMakers_AzureSitesConfig) }}";
-          $env:HUGO_ENV = "${{ (needs.Setup.outputs.AgileForDecisionMakers_AzureSitesConfig) }}";
-          hugo --source site --config hugo.yaml,hugo.${{ (needs.Setup.outputs.AgileForDecisionMakers_AzureSitesConfig) }}.yaml --logLevel info; # --minify
+          Write-Host "Building site for ${{ (needs.Setup.outputs.elcaminodelaamazona_AzureSitesConfig) }}";
+          $env:HUGO_ENV = "${{ (needs.Setup.outputs.elcaminodelaamazona_AzureSitesConfig) }}";
+          hugo --source site --config hugo.yaml,hugo.${{ (needs.Setup.outputs.elcaminodelaamazona_AzureSitesConfig) }}.yaml --logLevel info; # --minify
 
       - name: Copy Files
         shell: pwsh
@@ -262,7 +253,7 @@ jobs:
 
           # Paths to main and environment-specific config files
           $rootConfig = "./staticwebapp.config.json"
-          $environmentConfig = "./staticwebapp.config.${{ (needs.Setup.outputs.AgileForDecisionMakers_AzureSitesConfig) }}.json"
+          $environmentConfig = "./staticwebapp.config.${{ (needs.Setup.outputs.elcaminodelaamazona_AzureSitesConfig) }}.json"
 
           # Check if both target files exist
           if ((Test-Path -Path $rootConfig -ErrorAction Stop) -and (Test-Path -Path $environmentConfig -ErrorAction Stop)) {
@@ -308,34 +299,28 @@ jobs:
         run: |
           Get-ChildItem -Path ".\" -File
 
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ secrets.NKDAGILITY_BOT_APP_ID }}
-          private-key: ${{ secrets.NKDAGILITY_BOT_CLIENTSECRET }}
-
       - name: Build and Deploy
         uses: Azure/static-web-apps-deploy@v1
         id: azureDeploy
         env:
           VERBOSE: true
         with:
-          repo_token: ${{ steps.app-token.outputs.token }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: ./_site
           skip_app_build: true
           skip_api_build: true
           output_location: ""
-          deployment_environment: ${{ (needs.Setup.outputs.AgileForDecisionMakers_AzureSitesEnvironment) }}
+          deployment_environment: ${{ (needs.Setup.outputs.elcaminodelaamazona_AzureSitesEnvironment) }}
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
 
       - name: "Show Summery"
         if: always()
         shell: pwsh
-        id: AgileForDecisionMakers-summery
+        id: elcaminodelaamazona-summery
         run: |
           $markdown = @"
-              ## ${{needs.Setup.outputs.GitVersion_SemVer}} (${{needs.Setup.outputs.AgileForDecisionMakers_Ring}})
+              ## ${{needs.Setup.outputs.GitVersion_SemVer}} (${{needs.Setup.outputs.elcaminodelaamazona_Ring}})
              Deployed to [${{steps.azureDeploy.outputs.static_web_app_url}}](${{steps.azureDeploy.outputs.static_web_app_url}})
           "@
           echo $markdown >> $Env:GITHUB_STEP_SUMMARY
